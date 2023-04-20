@@ -1,5 +1,3 @@
-import { z } from 'https://deno.land/x/zod/mod.ts';
-
 type ObjectType = { [key: string]: any };
 
 function createSchema(obj: ObjectType): string {
@@ -16,6 +14,9 @@ function createSchema(obj: ObjectType): string {
 }
 
 function createFieldSchema(key: string, value: any): string {
+  if (value === null || value === undefined) {
+    return 'z.literal(null)';
+  }
   if (typeof value === 'string') {
     return 'z.string()';
   }
@@ -70,9 +71,7 @@ export async function generateSchema(
     return;
   }
 
-  // check if file is empty or already has content
   if (fileData.length > 0) {
-    // check if import statement already exists
     if (
       !fileData.includes(
         'import { z } from \'https://deno.land/x/zod/mod.ts\';',
