@@ -1,5 +1,10 @@
 import { Client } from 'https://deno.land/x/notion_sdk/src/mod.ts';
-import { BlockChildren, Table } from '../schema/blockChildren.ts';
+import {
+  BlockChildren,
+  // Db,
+  // dbSchema,
+  Table,
+} from '../schema/blockChildren.ts';
 import { generateSchema } from '../schema/generator.ts';
 
 const notion = new Client({
@@ -17,8 +22,20 @@ const tables: Table[] = response.results.filter((t) =>
   t.type == 'child_database'
 ) as Table[];
 
-// generateSchema(
-//   tables[0],
-//   'table',
-//   'schema/blockChildren.ts',
-// );
+async function getAllDatabases(databases: Table[]) {
+  const results = await Promise.all(databases.map(async (t) => {
+    const response = await notion.databases.retrieve({
+      database_id: t.id,
+    });
+    return response;
+  }));
+  return results;
+}
+
+const dbs = await getAllDatabases(tables);
+
+generateSchema(
+  dbs[0],
+  'db',
+  'schema/blockChildren.ts',
+);
