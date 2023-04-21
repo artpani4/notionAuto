@@ -6,7 +6,9 @@ function createSchema(obj: ObjectType): string {
 
   for (const [key, value] of Object.entries(obj)) {
     const fieldSchema = createFieldSchema(key, value);
-    schemaFields.push(`"${key}": ${fieldSchema}`);
+    if (key.includes(' ')) {
+      schemaFields.push(`"${key}": ${fieldSchema}`);
+    } else schemaFields.push(`${key}: ${fieldSchema}`);
   }
 
   const schema = `z.object({\n  ${schemaFields.join(',\n  ')}\n})`;
@@ -70,7 +72,9 @@ export async function generateSchema(
     // file does not exist, create it and add import statement
     await Deno.writeTextFile(
       filePath,
-      `import { z } from 'https://deno.land/x/zod/mod.ts';\n\n${code}`,
+      `import { z } from 'https://deno.land/x/zod/mod.ts';\n\n${code}\n\n${
+        jsonTree(obj, false).replace(/^/gm, '//')
+      }`,
     );
     return;
   }
