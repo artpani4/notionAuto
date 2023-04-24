@@ -2,7 +2,7 @@ import { Client } from 'https://deno.land/x/notion_sdk/src/mod.ts';
 
 import { generateSchema } from '../schema/generator.ts';
 
-import { extractDbs, getAllDatabases } from '../helpers/table.ts';
+import { extractDbs, getDatabasesInfo } from '../helpers/table.ts';
 import { Blocks } from '../schema/blocks.ts';
 import { Row } from '../schema/row.ts';
 
@@ -11,48 +11,42 @@ const notion = new Client({
 });
 
 const pageId = '2e79c94c8a7d4c319f0ee19582568e77';
+
+// Получили response - сгенерировали схему, получили Blocks
 const response = await notion.blocks.children.list({
   block_id: pageId,
-  page_size: 50,
 }) as Blocks;
 
-const tables: Row[] = await extractDbs<Blocks, Row>(response);
+const dbsList = await getDatabasesInfo<Blocks>(
+  notion,
+  response,
+);
 
-// generateSchema(response, 'blocks', 'schema/blocks.ts');
-
-// const tables: Table[] = response.results.filter((t) =>
-//   t.type == 'child_database'
-// ) as Table[];
-
-// const dbs = await getAllDatabases(notion, tables);
-
-// const art = await notion.databases.query({
-//   database_id: dbs[0].id,
-// });
-
-// const summ = (art.results as Row[]).map((t) =>
-//   t.properties.Сумма.number
-// );
-// console.log(summ);
-
-// const date = (art.results as Row[]).map((t) =>
-//   t.properties.Дата.date
-// );
-// console.log(date);
-
-// const type = (art.results as Row[]).map((t) =>
-//   t.properties['Тип траты'].multi_select
-// );
-// console.log(type);
-
-// const ratio = (art.results as Row[]).map((t) =>
-//   t.properties['Доля на себя'].number
-// );
-// console.log(ratio);
-
-// const name = (art.results as Row[]).map((t) =>
-//   t.properties.Название.title[0].plain_text
-// );
-// console.log(name);
-
-// generateSchema(art.results[1], 'row', 'schema/row.ts');
+// generateSchema(dbsList[0].results[0], 'row', 'schema/row.ts');
+const properties: { [key: string]: any[] } = {};
+(dbsList[0].results as Row[]).forEach((row) =>
+  Object.entries(row.properties).forEach(([key, value]) => {
+    if (value.type === 'number') {
+      if (!properties[key]) properties[key] = [];
+      properties[key].push((value as { number: number }).number);
+    } else if (value.type === 'multi_select') {
+      if (!properties[key]) properties[key] = [];
+      properties[key].push(
+        (value as { multi_select: { name: string }[] })
+          .multi_select[0].name,
+      );
+    } else if (value.type === 'date') {
+      if (!properties[key]) properties[key] = [];
+      properties[key].push(
+        (value as { date: { start: string } }).date.start,
+      );
+    } else if (value.type === 'title') {
+      if (!properties[key]) properties[key] = [];
+      properties[key].push(
+        (value as { title: { plain_text: string }[] }).title[0]
+          .plain_text,
+      );
+    }
+  })
+);
+console.log(properties);
