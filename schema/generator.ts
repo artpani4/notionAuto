@@ -6,7 +6,7 @@ function createSchema(obj: ObjectType): string {
 
   for (const [key, value] of Object.entries(obj)) {
     const fieldSchema = createFieldSchema(key, value);
-    if (key.includes(' ')) {
+    if (key.includes(' ') || key.includes('-')) {
       schemaFields.push(`"${key}": ${fieldSchema}`);
     } else schemaFields.push(`${key}: ${fieldSchema}`);
   }

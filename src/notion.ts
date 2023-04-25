@@ -5,6 +5,7 @@ import { generateSchema } from '../schema/generator.ts';
 import { extractDbs, getDatabasesInfo } from '../helpers/table.ts';
 import { Blocks } from '../schema/blocks.ts';
 import { Row } from '../schema/row.ts';
+import { Data } from '../schema/data.ts';
 
 const notion = new Client({
   auth: 'secret_6FjltgRbA8Ma61mAimwalGan3Y1rjXs9sqCgknlg6Bs',
@@ -49,4 +50,7 @@ const properties: { [key: string]: any[] } = {};
     }
   })
 );
-console.log(properties);
+
+const newData = properties as Data;
+
+// generateSchema(properties, 'data', 'schema/data.ts');
