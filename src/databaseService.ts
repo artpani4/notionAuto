@@ -1,6 +1,7 @@
 import Client from 'https://deno.land/x/notion_sdk@v2.2.3/src/Client.ts';
+import { Iblocks } from '../notionDb/blocks.ts';
+import { Trow } from '../notionDb/rowSchema.ts';
 import { generateSchema } from '../schema/generator.ts';
-import { TestRow } from '../schema/testRow.ts';
 
 export async function getDatabasesInfo<
   T extends { results: { type: string; id: string }[] },
@@ -38,14 +39,8 @@ export async function devGetBlocks(
   generateSchema(response, 'blocks', schemaPath);
 }
 
-// interface IrowProp{
-//   type:string,
-//   number?: number,
-
-// }
-export type TrowProp = Pick<TestRow, 'properties'>;
 export function extractData<
-  T extends TrowProp,
+  T extends Trow,
 >(
   results: T[],
 ) {
@@ -119,9 +114,29 @@ export function extractData<
           properties[key].push(
             (value as { status: { name: string } }).status.name,
           );
+        } else if (value.type === 'rich_text') {
+          properties[key].push(
+            (value as { rich_text: { plain_text: string }[] })
+              .rich_text.map((rt) => rt.plain_text),
+          );
         }
       }
     })
   );
   return properties;
+}
+
+export async function getDbsListByPage(
+  client: Client,
+  pageId: string,
+) {
+  const response = await client.blocks.children.list({
+    block_id: pageId,
+  }) as Iblocks;
+
+  const dbsList = await getDatabasesInfo<Iblocks>(
+    client,
+    response,
+  );
+  return dbsList;
 }

@@ -119,6 +119,14 @@ export const testRowSchema = z.object({
         color: z.string(),
       }),
     }).optional(),
+    rich_text: z.object({
+      id: z.string(),
+      type: z.string(),
+      rich_text: z.array(
+        z.object({ plain_text: z.string(), href: z.literal(null) }),
+      ),
+    })
+      .optional(),
     Name: z.object({
       id: z.string(),
       type: z.string(),
@@ -145,6 +153,7 @@ export const testRowSchema = z.object({
 });
 
 export type TestRow = z.infer<typeof testRowSchema>;
+export type Trow = Pick<TestRow, 'properties'>;
 
 //├─ object
 //├─ id
