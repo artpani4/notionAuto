@@ -1,6 +1,8 @@
 {
   "version": "2",
   "remote": {
+    "http://localhost:8000/src/manager.ts": "bfe8c6607514f6b6aefe2d2471d39c59441168c1ebce625eaac63b96a9ed50a0",
+    "http://localhost:8000/src/mod.ts": "d4733ef75a26fd51eece87e64aa036b221fc118c1b58df64230f693f0e49c3d7",
     "https://deno.land/std@0.149.0/_util/assert.ts": "e94f2eb37cebd7f199952e242c77654e43333c1ac4c5c700e929ea3aa5489f74",
     "https://deno.land/std@0.149.0/_util/os.ts": "3b4c6e27febd119d36a416d7a97bd3b0251b77c88942c8f16ee5953ea13e2e49",
     "https://deno.land/std@0.149.0/fs/_util.ts": "2cf50bfb1081c2d5f2efec10ac19abbc2baf478e51cd1b057d0da2f30585b6ba",

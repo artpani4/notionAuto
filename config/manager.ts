@@ -1,8 +1,8 @@
-import { ConfigManager } from 'https://deno.land/x/tuner@v0.0.2/src/mod.ts';
+import { ConfigManager } from 'http://localhost:8000/src/mod.ts';
 import {
   DatabaseConfig,
   databaseConfigSchema,
-} from './databaseConfigSchema.ts';
+} from './databaseConfig.ts';
 
 const manager = new ConfigManager<
   DatabaseConfig,
@@ -12,7 +12,5 @@ const manager = new ConfigManager<
 );
 
 manager.addLocalConfigUrl('./config/databaseLocalConfig.ts');
-manager.addLocalConfigUrl('./config/databasePupilsConfig.ts');
-manager.addLocalConfigUrl('./config/databasePurePupilsConfig.ts');
 
 export default manager;

@@ -1,6 +1,5 @@
 import { Client } from 'https://deno.land/x/notion_sdk/src/mod.ts';
-import { DatabaseConfig } from '../config/databaseConfigSchema.ts';
-import manager from '../config/manager.ts';
+
 import { getNumberFromSquareBrackets } from '../helpers/rowService.ts';
 import { Trow } from '../notionDb/mod.ts';
 import { PurePupilsData } from '../schema/mod.ts';
