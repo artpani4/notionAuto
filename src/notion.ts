@@ -7,10 +7,15 @@ import { PurePupilsData } from '../schema/mod.ts';
 import { extractData, getDbsListByPage } from './databaseService.ts';
 
 try {
-  const config = await manager.localLoadConfig(
-    (config: DatabaseConfig) => config.env === 'PURE',
-  );
-  if (config == null) throw new Error('Config not found');
+  // const config = await manager.localLoadConfig(
+  //   (config: DatabaseConfig) => config.env === 'PURE',
+  // );
+  // if (config == null) throw new Error('Config not found');
+  const config = {
+    env: 'PURE',
+    apiKey: 'secret_6FjltgRbA8Ma61mAimwalGan3Y1rjXs9sqCgknlg6Bs',
+    pageId: '27e6463cda3d48c2b085ae4f998d828a',
+  } as DatabaseConfig;
   const notion = new Client({
     auth: config.apiKey,
   });
