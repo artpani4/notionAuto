@@ -1,6 +1,7 @@
 import { Client } from 'https://deno.land/x/notion_sdk/src/mod.ts';
 import { DatabaseConfig } from '../config/databaseConfigSchema.ts';
 import manager from '../config/manager.ts';
+import { getNumberFromSquareBrackets } from '../helpers/rowService.ts';
 import { Trow } from '../notionDb/mod.ts';
 import { PurePupilsData } from '../schema/mod.ts';
 import { extractData, getDbsListByPage } from './databaseService.ts';
@@ -19,8 +20,18 @@ try {
   const myData = extractData(
     dbsList[0].results as Trow[],
   ) as PurePupilsData;
-  console.log(myData);
+
+  const inf = {} as {
+    [key: string]: number;
+  };
+  myData.Расписание.forEach((day, index) => {
+    const total = (day as string[]).reduce((acc, cur) => {
+      const num = getNumberFromSquareBrackets(cur);
+      return acc + num;
+    }, 0);
+    inf[myData.День[index]] = total;
+  });
+  console.log(inf);
 } catch (e) {
   console.log(e);
-  Deno.exit(0);
 }
